@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Scraper Tool</title>
+    <title>Email Scraper Tool v2.0 - Enhanced</title>
     <style>
         * {
             margin: 0;
@@ -281,8 +281,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>ðŸ“§ Email Scraper</h1>
-        <p class="subtitle">Extract email addresses from multiple websites at once</p>
+        <h1>📧 Email Scraper Tool v2.0</h1>
+        <p class="subtitle">Enhanced accuracy & robustness - Extract emails from multiple websites with advanced detection</p>
 
         <form id="scrapeForm">
             <div class="input-group">
@@ -311,7 +311,13 @@
                         <strong id="totalEmails">0</strong> unique emails
                     </div>
                     <div class="stat">
-                        <strong id="totalUrls">0</strong> websites scraped
+                        <strong id="totalUrls">0</strong> websites processed
+                    </div>
+                    <div class="stat">
+                        <strong id="successfulScrapes">0</strong> successful
+                    </div>
+                    <div class="stat">
+                        <strong id="failedScrapes">0</strong> failed
                     </div>
                 </div>
             </div>
@@ -338,6 +344,8 @@
         const allEmailsList = document.getElementById('allEmailsList');
         const totalEmails = document.getElementById('totalEmails');
         const totalUrls = document.getElementById('totalUrls');
+        const successfulScrapes = document.getElementById('successfulScrapes');
+        const failedScrapes = document.getElementById('failedScrapes');
 
         let allEmailsData = [];
 
@@ -369,22 +377,27 @@
                 if (data.success) {
                     allEmailsData = data.all_emails;
                     
-                    // Update summary
+                    // Update summary with enhanced statistics
                     totalEmails.textContent = data.total_emails;
                     totalUrls.textContent = data.total_urls;
+                    successfulScrapes.textContent = data.successful_scrapes || 0;
+                    failedScrapes.textContent = data.failed_scrapes || 0;
                     
                     // Display results by website
                     websiteResults.innerHTML = data.results.map(result => {
                         const hasError = result.error;
                         const errorClass = hasError ? 'error' : '';
                         
+                        const processingTime = result.processing_time ? ` (${result.processing_time}s)` : '';
+                        const statusCode = result.status_code ? ` - Status: ${result.status_code}` : '';
+                        
                         return `
                             <div class="website-result ${errorClass}">
                                 <div class="website-header">
                                     <div class="website-url">${result.url}</div>
-                                    <div class="website-count">${result.count} email${result.count !== 1 ? 's' : ''}</div>
+                                    <div class="website-count">${result.count} email${result.count !== 1 ? 's' : ''}${processingTime}</div>
                                 </div>
-                                ${hasError ? `<div class="error-message">${result.error}</div>` : ''}
+                                ${hasError ? `<div class="error-message">⚠️ ${result.error}${statusCode}</div>` : ''}
                                 ${result.emails.length > 0 ? `
                                     <div class="email-list">
                                         ${result.emails.map(email => `

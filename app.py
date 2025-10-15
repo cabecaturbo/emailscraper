@@ -150,15 +150,15 @@ def scrape_emails(url):
                 'error': 'Invalid URL format'
             }
         
-        # Check robots.txt (optional - you can disable this for faster scraping)
-        if not check_robots_txt(normalized_url):
-            return {
-                'success': False,
-                'emails': [],
-                'count': 0,
-                'url': normalized_url,
-                'error': 'Blocked by robots.txt'
-            }
+        # Check robots.txt (disabled for better compatibility - can be re-enabled if needed)
+        # if not check_robots_txt(normalized_url):
+        #     return {
+        #         'success': False,
+        #         'emails': [],
+        #         'count': 0,
+        #         'url': normalized_url,
+        #         'error': 'Blocked by robots.txt'
+        #     }
         
         # Enhanced headers with random user agent
         headers = {
