@@ -32,16 +32,65 @@
             overflow-y: auto;
         }
 
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
         h1 {
             color: #333;
             margin-bottom: 10px;
-            font-size: 2em;
+            font-size: 2.2em;
+            position: relative;
+            display: inline-block;
+        }
+
+        .version-badge {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.6em;
+            font-weight: bold;
+            position: absolute;
+            top: -8px;
+            right: -50px;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
         }
 
         .subtitle {
             color: #666;
             margin-bottom: 30px;
             font-size: 0.95em;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-list {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .features-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .features-list li {
+            padding: 5px 0;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .features-list li:before {
+            content: "✓ ";
+            color: #4CAF50;
+            font-weight: bold;
         }
 
         .input-group {
@@ -281,8 +330,19 @@
 </head>
 <body>
     <div class="container">
-        <h1>📧 Email Scraper Tool v2.0</h1>
-        <p class="subtitle">Enhanced accuracy & robustness - Extract emails from multiple websites with advanced detection</p>
+        <div class="header">
+            <h1>📧 Email Scraper Tool<span class="version-badge">v2.0</span></h1>
+            <p class="subtitle">Enhanced accuracy & robustness - Extract emails from multiple websites with advanced detection</p>
+            
+            <div class="features-list">
+                <ul>
+                    <li>Advanced email pattern detection</li>
+                    <li>Enhanced error handling & reporting</li>
+                    <li>Anti-detection measures</li>
+                    <li>Processing time tracking</li>
+                </ul>
+            </div>
+        </div>
 
         <form id="scrapeForm">
             <div class="input-group">
@@ -293,19 +353,19 @@
                     placeholder="example.com&#10;https://another-site.com&#10;third-website.org"
                     required
                 ></textarea>
-                <p class="hint">ðŸ’¡ Enter multiple URLs, one per line. You can include or omit https://</p>
+                <p class="hint">💡 Enter multiple URLs, one per line. You can include or omit https://</p>
             </div>
-            <button type="submit" id="submitBtn">Scrape All Websites</button>
+            <button type="submit" id="submitBtn">🚀 Start Enhanced Scraping</button>
         </form>
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>Scraping emails from multiple websites...</p>
+            <p>🔄 Enhanced scraping in progress - Processing multiple websites with advanced detection...</p>
         </div>
 
         <div class="results" id="results">
             <div class="summary">
-                <h2>âœ¨ Results Summary</h2>
+                <h2>✨ Results Summary</h2>
                 <div class="summary-stats">
                     <div class="stat">
                         <strong id="totalEmails">0</strong> unique emails
@@ -322,12 +382,12 @@
                 </div>
             </div>
 
-            <button class="copy-all-btn" onclick="copyAllEmails()">ðŸ“‹ Copy All Unique Emails</button>
+            <button class="copy-all-btn" onclick="copyAllEmails()">📋 Copy All Unique Emails</button>
 
-            <div class="section-title">ðŸ“Š Results by Website</div>
+            <div class="section-title">🌐 Results by Website</div>
             <div id="websiteResults"></div>
 
-            <div class="section-title">ðŸ“§ All Unique Emails</div>
+            <div class="section-title">📧 All Unique Emails</div>
             <div class="email-list" id="allEmailsList"></div>
         </div>
 
@@ -421,7 +481,7 @@
                             </div>
                         `).join('');
                     } else {
-                        allEmailsList.innerHTML = '<div class="no-emails">No emails found on any website ðŸ˜•</div>';
+                        allEmailsList.innerHTML = '<div class="no-emails">No emails found on any website 😔</div>';
                     }
                     
                     results.style.display = 'block';
