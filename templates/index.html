@@ -1,0 +1,487 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Scraper Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .hint {
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .summary h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .summary-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.95em;
+        }
+
+        .stat {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 8px;
+        }
+
+        .section-title {
+            color: #333;
+            font-size: 1.2em;
+            margin: 25px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .website-result {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .website-result.error {
+            border-left-color: #ff6b6b;
+        }
+
+        .website-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .website-url {
+            color: #667eea;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .website-count {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+
+        .website-result.error .website-count {
+            background: #ff6b6b;
+        }
+
+        .email-list {
+            margin-top: 10px;
+        }
+
+        .email-item {
+            background: white;
+            padding: 10px 12px;
+            margin-bottom: 6px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .email-text {
+            color: #333;
+            word-break: break-all;
+            font-size: 0.95em;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: background 0.3s;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+
+        .copy-all-btn {
+            background: #764ba2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: background 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .copy-all-btn:hover {
+            background: #5f3a82;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #c33;
+        }
+
+        .no-emails {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ðŸ“§ Email Scraper</h1>
+        <p class="subtitle">Extract email addresses from multiple websites at once</p>
+
+        <form id="scrapeForm">
+            <div class="input-group">
+                <label for="urls">Website URLs (one per line)</label>
+                <textarea 
+                    id="urls" 
+                    name="urls" 
+                    placeholder="example.com&#10;https://another-site.com&#10;third-website.org"
+                    required
+                ></textarea>
+                <p class="hint">ðŸ’¡ Enter multiple URLs, one per line. You can include or omit https://</p>
+            </div>
+            <button type="submit" id="submitBtn">Scrape All Websites</button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Scraping emails from multiple websites...</p>
+        </div>
+
+        <div class="results" id="results">
+            <div class="summary">
+                <h2>âœ¨ Results Summary</h2>
+                <div class="summary-stats">
+                    <div class="stat">
+                        <strong id="totalEmails">0</strong> unique emails
+                    </div>
+                    <div class="stat">
+                        <strong id="totalUrls">0</strong> websites scraped
+                    </div>
+                </div>
+            </div>
+
+            <button class="copy-all-btn" onclick="copyAllEmails()">ðŸ“‹ Copy All Unique Emails</button>
+
+            <div class="section-title">ðŸ“Š Results by Website</div>
+            <div id="websiteResults"></div>
+
+            <div class="section-title">ðŸ“§ All Unique Emails</div>
+            <div class="email-list" id="allEmailsList"></div>
+        </div>
+
+        <div class="error" id="error" style="display: none;"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('scrapeForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const error = document.getElementById('error');
+        const websiteResults = document.getElementById('websiteResults');
+        const allEmailsList = document.getElementById('allEmailsList');
+        const totalEmails = document.getElementById('totalEmails');
+        const totalUrls = document.getElementById('totalUrls');
+
+        let allEmailsData = [];
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const urls = document.getElementById('urls').value.trim();
+            
+            // Reset UI
+            loading.style.display = 'block';
+            results.style.display = 'none';
+            error.style.display = 'none';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('/scrape', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ urls })
+                });
+
+                const data = await response.json();
+
+                loading.style.display = 'none';
+                submitBtn.disabled = false;
+
+                if (data.success) {
+                    allEmailsData = data.all_emails;
+                    
+                    // Update summary
+                    totalEmails.textContent = data.total_emails;
+                    totalUrls.textContent = data.total_urls;
+                    
+                    // Display results by website
+                    websiteResults.innerHTML = data.results.map(result => {
+                        const hasError = result.error;
+                        const errorClass = hasError ? 'error' : '';
+                        
+                        return `
+                            <div class="website-result ${errorClass}">
+                                <div class="website-header">
+                                    <div class="website-url">${result.url}</div>
+                                    <div class="website-count">${result.count} email${result.count !== 1 ? 's' : ''}</div>
+                                </div>
+                                ${hasError ? `<div class="error-message">${result.error}</div>` : ''}
+                                ${result.emails.length > 0 ? `
+                                    <div class="email-list">
+                                        ${result.emails.map(email => `
+                                            <div class="email-item">
+                                                <span class="email-text">${email}</span>
+                                                <button class="copy-btn" onclick="copyEmail('${email}')">Copy</button>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                ` : (!hasError ? '<div class="no-emails">No emails found</div>' : '')}
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    // Display all unique emails
+                    if (data.all_emails.length > 0) {
+                        allEmailsList.innerHTML = data.all_emails.map(email => `
+                            <div class="email-item">
+                                <span class="email-text">${email}</span>
+                                <button class="copy-btn" onclick="copyEmail('${email}')">Copy</button>
+                            </div>
+                        `).join('');
+                    } else {
+                        allEmailsList.innerHTML = '<div class="no-emails">No emails found on any website ðŸ˜•</div>';
+                    }
+                    
+                    results.style.display = 'block';
+                } else {
+                    error.textContent = data.error;
+                    error.style.display = 'block';
+                }
+            } catch (err) {
+                loading.style.display = 'none';
+                submitBtn.disabled = false;
+                error.textContent = 'An error occurred. Please try again.';
+                error.style.display = 'block';
+            }
+        });
+
+        function copyEmail(email) {
+            navigator.clipboard.writeText(email).then(() => {
+                showNotification('Email copied!');
+            }).catch(() => {
+                alert('Failed to copy email');
+            });
+        }
+
+        function copyAllEmails() {
+            if (allEmailsData.length === 0) {
+                alert('No emails to copy');
+                return;
+            }
+            
+            const emailText = allEmailsData.join('\n');
+            navigator.clipboard.writeText(emailText).then(() => {
+                showNotification(`Copied ${allEmailsData.length} emails!`);
+            }).catch(() => {
+                alert('Failed to copy emails');
+            });
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #667eea;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(400px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(400px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
